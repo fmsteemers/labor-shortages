@@ -39,7 +39,7 @@ require(readxl)
 require(xml2)
 
 ### Read DDI file
-ddi_vector <- c("cps_00101.xml","cps_00104.xml","cps_00110.xml")
+ddi_vector <- c("cps_2018onward.xml","cps_00104.xml","cps_00101.xml")
 #ddi_vector <- c("cps_00108.xml")
 ddi_list <- lapply(ddi_vector,read_ipums_ddi)
 names(ddi_list) <- ddi_vector
@@ -54,8 +54,8 @@ data_frame <- bind_rows(data_list)
 names(data_frame) <- tolower(names(data_frame))
 
 # Reference labels
-reference_labels <- ddi_list$cps_00110.xml$var_info$val_labels
-names(reference_labels) <- ddi_list$cps_00110.xml$var_info$var_name
+reference_labels <- ddi_list$cps_2018onward.xml$var_info$val_labels
+names(reference_labels) <- ddi_list$cps_2018onward.xml$var_info$var_name
 
 names(data_frame)
 
@@ -274,8 +274,8 @@ emp_base_temp <- data_frame %>%
 
 ### Base dataset with 2 digit occupations
 emp_base_new <- emp_base_temp %>%
-  select(year,month,wtfinl,occ2010_2digit,sex,diffany,educ_b,age_group,race_group,empstat,labforce,nilfact,statefip,wkstat,covidtelew) %>%
-  group_by(year,month,occ2010_2digit,sex,diffany,educ_b,age_group,race_group,empstat,labforce,nilfact,statefip,wkstat,covidtelew) %>%
+  select(year,month,wtfinl,occ2010_2digit,sex,diffany,educ_b,age,age_group,race_group,empstat,labforce,nilfact,statefip,wkstat,covidtelew) %>%
+  group_by(year,month,occ2010_2digit,sex,diffany,educ_b,age,age_group,race_group,empstat,labforce,nilfact,statefip,wkstat,covidtelew) %>%
   summarise(pop = sum(wtfinl)) %>%
   #summarise(emp = n()) %>%
   ungroup() %>%
@@ -305,8 +305,8 @@ temp <- emp_base_new %>%
 
 ### Now including occ2010 6digit occupation (only used for gender dataset)
 emp_base_new_6d <- emp_base_temp %>%
-  select(year,month,wtfinl,occ2010_2digit,sex,diffany,educ_b,age_group,race_group,empstat,labforce,nilfact,statefip,wkstat,covidtelew,occ2010) %>%
-  group_by(year,month,occ2010_2digit,sex,diffany,educ_b,age_group,race_group,empstat,labforce,nilfact,statefip,wkstat,covidtelew,occ2010) %>%
+  select(year,month,wtfinl,occ2010_2digit,sex,diffany,educ_b,age,age_group,race_group,empstat,labforce,nilfact,statefip,wkstat,covidtelew,occ2010) %>%
+  group_by(year,month,occ2010_2digit,sex,diffany,educ_b,age,age_group,race_group,empstat,labforce,nilfact,statefip,wkstat,covidtelew,occ2010) %>%
   summarise(pop = sum(wtfinl)) %>%
   #summarise(emp = n()) %>%
   ungroup() %>%
@@ -328,7 +328,7 @@ emp_base_new_6d <- emp_base_temp %>%
 write_csv(emp_base_new,'emp_base_new.csv')
 
 
-write_csv(emp_base_new_6d %>% select(year,month,occ2010,occ2010_lbl,occ2010_2digit,educ_b,age_group,race_group,empstat_adj_lbl,sex_lbl,pop,labforce_lbl,wkstat_lbl,covidtelew_lbl,statefip_lbl),'emp_base_new_6d.csv')
+write_csv(emp_base_new_6d %>% select(year,month,occ2010,occ2010_lbl,occ2010_2digit,educ_b,age,age_group,race_group,empstat_adj_lbl,sex_lbl,pop,labforce_lbl,wkstat_lbl,covidtelew_lbl,statefip_lbl),'emp_base_new_6d.csv')
 
 ###################################################
 ### OLD ---- But still input in 2 digit/6digit occupation analyses
