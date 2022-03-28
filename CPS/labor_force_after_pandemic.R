@@ -1,4 +1,4 @@
-setwd('I:/Papadopoulos/CPS')
+setwd('I:/Steemers/CPS/IPUMS')
 require(rebus)
 require(broom)
 require(ipumsr)
@@ -14,7 +14,7 @@ require(ggplot2)
 ############################################################################################################
 ############################################################################################################
 ### Read DDI file
-ddi_vector <- c("cps_00078.xml","2018onward.xml")
+ddi_vector <- c("cps_00126.xml","cps_00125.xml","cps_00124.xml","cps_00123.xml")
 ddi_list <- lapply(ddi_vector,read_ipums_ddi)
 names(ddi_list) <- ddi_vector
 # data_list <- lapply(ddi_list,read_ipums_micro,IpumsDataFrameCallback$new(function(x, pos) {
@@ -30,8 +30,8 @@ names(data_frame) <- tolower(names(data_frame))
 setwd('I:/Steemers/Team charts and data/Labor force after pandemic') ### for all models
 #setwd('I:/Steemers/ACS/Output/Wage gaps - full 6digit model') ### exception for only running the 6digit occ ind model
 ### Create reference labels for IPUMS variables
-reference_labels <- ddi_list$`2018onward`$var_info$val_labels
-names(reference_labels) <- ddi_list$`2018onward`$var_info$var_name
+reference_labels <- ddi_list$cps_00122$var_info$val_labels
+names(reference_labels) <- ddi_list$cps_00122$var_info$var_name
 
 df <- data_frame %>%
   mutate(educ_b = case_when(educ %in% c(1:72) ~ 'below_hs',
@@ -69,9 +69,9 @@ df <- data_frame %>%
                                yngch >= 13 & yngch <= 17 ~ '1 or more aged 13 to 17',
                                yngch >= 18 & yngch <= 98 ~ '1 or more aged 18 or higher',
                                TRUE ~ 'Other')) %>%
-  mutate(citizen_group = ifelse(citizen == 5,'non-citizen','citizen')) %>%
-  select(year,month,wtfinl,educ_b,age_group,age_group_large,race_group,sex,empstat,labforce,classwkr,wkstat,nilfact,wnlook,wrkoffer,child_age,citizen_group) %>%
-  group_by(year,month,educ_b,age_group,age_group_large,race_group,sex,empstat,labforce,classwkr,wkstat,nilfact,wnlook,wrkoffer,child_age,citizen_group) %>%
+  #mutate(citizen_group = ifelse(citizen == 5,'non-citizen','citizen')) %>%
+  select(year,month,wtfinl,educ_b,age_group,age_group_large,race_group,sex,empstat,labforce,classwkr,wkstat,nilfact,wnlook,wrkoffer,child_age) %>%
+  group_by(year,month,educ_b,age_group,age_group_large,race_group,sex,empstat,labforce,classwkr,wkstat,nilfact,wnlook,wrkoffer,child_age) %>%
   summarise(value = sum(wtfinl)) %>%
   left_join(reference_labels$SEX %>% rename(sex = val,sex_lbl = lbl),by = c('sex')) %>%
   left_join(reference_labels$EMPSTAT %>% rename(empstat = val,empstat_lbl = lbl),by = c('empstat')) %>%
